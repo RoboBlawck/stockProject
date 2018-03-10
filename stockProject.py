@@ -15,3 +15,4 @@ companyData_1 = web.DataReader(company, source, start, end)
 companyData_2 = web.DataReader(company, source, start, end)
 #Initilization ended#
 
+TEST
