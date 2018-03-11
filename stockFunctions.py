@@ -4,18 +4,35 @@
 # Date Submitted: NaN
 # Operating System: Windows
 
-import datetime
+from datetime import datetime, timedelta
+import pandas as pd
 import pandas_datareader.data as web
 
-def latestStocks(list, source, start, end):
-        # Attempts to display the stocks of the current days.
-        for n in range(0, len(list)): #Will loop for each single company because of len(list)
-            stockData = web.DataReader(list[n], source, start, end)
-            #Countermeasures incase stock information of current date is not published yet, will instead go back one day.
-            if stockData.empty:
-                currentTime = datetime.datetime.now()
-                start = datetime.datetime(currentTime.year, currentTime.month, currentTime.day - 1)
-                end = datetime.datetime(currentTime.year, currentTime.month, currentTime.day)
-                stockData = web.DataReader(list[n], source, start, end)
-            print(str(list[n]) + ": $" + str(stockData.iloc[0, 3]))
-            #Developer notes: Normally I would have done something to make this return a list, but this project doesn't require that.
+#A modified function of web.DataReader with restricted time parameters (latest possible date) which displays all of
+#each companies stock data in one DataFrame.
+def getLatestStocks(companies, source, start, end):
+    stockFrame = pd.DataFrame()
+    for company in companies: #Will loop for each single company
+        stockData = pd.DataFrame.reset_index(web.DataReader(company, source, start, end))
+        #Gets the stock data from yesterday if there is no stock information for today:
+        if stockExists(stockData):
+            dayBefore = start - timedelta(days=1)
+            stockData = pd.DataFrame.reset_index(web.DataReader(company, source, dayBefore, end))
+        stockFrame = pd.concat([stockFrame, stockData])
+    stockFrame.index = companies
+    return(stockFrame)
+
+
+def stockExists(stockData):
+    return (stockData.dropna().empty) #DataFrames are techincally not "empty" if they have NaNs for their data
+
+#def stockPrice(stockData):
+    #return(stockData.iloc([0,0]))
+
+
+
+
+
+
+
+
