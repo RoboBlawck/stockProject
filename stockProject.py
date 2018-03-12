@@ -22,22 +22,30 @@ if automaticMode == False:
         year = int(input("What year? "))
         month = int(input("What month? "))
         day = int(input("What day? "))
-        #price = float(input("What price would you like to mantain?"))
+        price = float(input("What price would you like to mantain?"))
         date = datetime(year, month, day)
         #Gets stock data, indexes the company, and prints it.
         stockData = web.DataReader(company, source, date, date)
         stockData.index = [company]
-        #share = price/stockFunctions.stockPrice(stockData)
+        share = price/stockFunctions.getStock(stockData)
         print(stockData)
-        #print("The required shares to mantain $"+str(price)+"is: "+share+" shares")
+        print(stockFunctions.getStock(stockData))
+        print("The required shares to mantain $" + str(price) + " is: " + str(share) + " shares")
 
 else:
     print("Automatic mode activated:")
     #Automatically intializes the datareader parameters
-    today = datetime.now()
+    dates = [datetime(2018, 3, 6), datetime(2018, 3, 8), datetime(2018, 3, 12), datetime(2018, 3, 14),
+             datetime(2018, 3, 16)
+        , datetime(2018, 3, 20), datetime(2018, 3, 22), datetime(2018, 3, 26), datetime(2018, 3, 28),
+             datetime(2018, 4, 9),
+             datetime(2018, 4, 11), datetime(2018, 4, 13)] #Not effiecent
     source = 'iex'
     companies = ['AMZN', 'MSFT', 'NVDA', 'NKE', 'PEP']
-    stockData = stockFunctions.getLatestStocks(companies, source, today, today)
+    investments = [2000,1500,1000,750,750]
+    stockData = stockFunctions.getStocks(companies, source, dates)
+    stockData = stockFunctions.latestStocks(stockData)
+    stockData = stockFunctions.latestShares(investments, stockData)
     print(stockData)
 
 
