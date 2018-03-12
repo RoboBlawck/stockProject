@@ -4,7 +4,7 @@
 # Date Submitted: NaN
 # Operating System: Windows
 
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import pandas_datareader.data as web
 import stockFunctions
 
@@ -35,11 +35,7 @@ if automaticMode == False:
 else:
     print("Automatic mode activated:")
     #Automatically intializes the datareader parameters
-    dates = [datetime(2018, 3, 6), datetime(2018, 3, 8), datetime(2018, 3, 12), datetime(2018, 3, 14),
-             datetime(2018, 3, 16)
-        , datetime(2018, 3, 20), datetime(2018, 3, 22), datetime(2018, 3, 26), datetime(2018, 3, 28),
-             datetime(2018, 4, 9),
-             datetime(2018, 4, 11), datetime(2018, 4, 13)] #Not effiecent
+    dates = stockFunctions.datesFrom(datetime(2018, 3, 6),datetime(2018, 4, 13))
     source = 'iex'
     companies = ['AMZN', 'MSFT', 'NVDA', 'NKE', 'PEP']
     investments = [2000,1500,1000,750,750]

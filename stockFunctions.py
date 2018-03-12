@@ -4,7 +4,7 @@
 # Date Submitted: NaN
 # Operating System: Windows
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import pandas_datareader.data as web
 
@@ -16,8 +16,9 @@ def getStocks(companies, source, dates):
     for company in companies: #Will loop for each single company
         for date in dates:
             stockData = pd.DataFrame.reset_index(web.DataReader(company, source, date, date))
-            stockData.index = [company]  # reset_index cannot be used with index = at the same time
-            stockFrame = pd.concat([stockFrame, stockData])
+            if stockExists(stockData):
+                stockData.index = [company]  # reset_index cannot be used with index = at the same time
+                stockFrame = pd.concat([stockFrame, stockData])
     stockFrame['date'] = pd.to_datetime(stockFrame.date)
     stockFrame = stockFrame.sort_values(by='date')
     return(stockFrame)
@@ -37,6 +38,13 @@ def latestShares(investments, stockFrame):
     investments.index = stockFrame.index # shares = shares[0] hinges on this command being after it
     stockFrame = stockFrame.assign(investments=investments)
     return(stockFrame)
+
+def datesFrom(start, end):
+    difference = end - start
+    dates = []
+    for i in range(difference.days + 1):
+        dates.append(start + timedelta(days=i))
+    return(dates)
 
 def calculateShares(stockPrice,investment):
     return(investment/stockPrice)
